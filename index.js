@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const {config} = require('./constants');
+const {config} = require('./helpers/constants');
 
 const server = express();
 
