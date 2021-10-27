@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const {check, validationResult} = require('express-validator');
 const User = require('../models/User');
 const {config} = require('../helpers/constants');
-const httpErrors = require('./helpers/httpErrors');
+const {getHttpRes} = require('../helpers/get-http-res');
 
 const router = Router();
 
@@ -29,19 +29,20 @@ async function regUser(req, res) {
         const { email, password } = req.body;
         const userExists = await User.findOne({ email });
 
-        if  (userExists) {
-            return res.status(400).json({ message: 'User with such email already exists' });
+        if (userExists) {
+            return getHttpRes(400, res, { message: 'User with such email already exists' });
         }
 
         const hashedPassword = await bcrypt.hash(password, 12);
 
         const newUser = new User({ email, password: hashedPassword });
         await newUser.save();
-        res.status(201).json({ message: 'New user has been created' });
+        
+        return getHttpRes(201, res);
 
 
     } catch (e) {
-        return httpErrors._500(res);
+        return getHttpRes(500, res);
     }
 }
 
@@ -52,12 +53,12 @@ async function loginUser(req, res) {
         const user = await User.findOne({ email });
 
         if (!user) {
-            return res.status(403).json({ message: 'Wrong credentials. Please, try again.' })
+            return getHttpRes(403, res);
         }
 
         const isPasswordMatch = bcrypt.compare(password, user.password);
         if(!isPasswordMatch) {
-            return res.status(403).json({ message: 'Wrong credentials. Please, try again.' })
+            return getHttpRes(403, res);
         }
 
         const token = jwt.sign(
@@ -66,16 +67,16 @@ async function loginUser(req, res) {
             { expiresIn: '1h' }
         )
 
-        return res.status(200).json({ message: 'Successfully authenticated', token })
+        return getHttpsRes(200, res, { token })
     } catch (e) {
-        return res.status(500).json({ message: 'Internal server error' });
+        return getHttpsRes(500, res);
     }
 }
 
 function checkValidation (req) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({
+        return getHttpRes(400, res, {
             errors: errors.array(),
             message: 'Validation error'
         }) 
