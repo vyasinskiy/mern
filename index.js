@@ -6,6 +6,7 @@ const server = express();
 
 start();
 
+server.use(express.json({ extented: true }));
 server.use('/api/', require('./routes/auth.routes'));
 
 async function start() {
