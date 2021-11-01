@@ -11,5 +11,4 @@ export function App() {
       {authRoutes}
     </BrowserRouter>
   )
-  
 }
