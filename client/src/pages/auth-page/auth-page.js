@@ -1,5 +1,4 @@
 import React, {useState} from "react";
-import s from './auth-page.css';
 
 export function AuthPage() {
     const [state, setState] = useState({email: '', password: ''});
@@ -30,7 +29,7 @@ export function AuthPage() {
         }
     }
     return (
-        <div className={s.container}>
+        <div>
           <h1>Hello App</h1>
           <form onSubmit={handleSubmit}>
             <input name="email" value={state.email} onChange={changeHandler}/>
