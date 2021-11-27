@@ -5,11 +5,11 @@ import { AuthPage } from '../pages/auth-page/auth-page'
 export function AnonymousRoutes() {
 	return (
 		<Switch>
-          <Route path="/login">
-              <AuthPage/>
-          </Route>
-          <Redirect to="/login"/>
-      </Switch>
+			<Route path="/login">
+				<AuthPage/>
+			</Route>
+			<Redirect to="/login"/>
+		</Switch>
 	);
 }
 
