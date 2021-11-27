@@ -12,8 +12,8 @@ export function AuthPage() {
 
     async function handleSubmit(e) {
         try {
-        e.preventDefault();
-        const res = await fetch(
+          e.preventDefault();
+          const res = await fetch(
             'api/auth/reg',
             {
             method: 'POST',
@@ -22,11 +22,11 @@ export function AuthPage() {
             },
             body: JSON.stringify(state)
             }
-        )
-        const json = await res.json();
-        console.log(json);
+          )
+          const json = await res.json();
+          console.log(json);
         } catch (err) {
-        console.error(err)
+          console.error(err)
         }
     }
     return (
