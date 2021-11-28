@@ -14,18 +14,24 @@ router.post(
 		check('email', 'Wrong email').isEmail(),
 		check('password', 'Password is not correspond to safety required').isLength({ min: 6 })
 	],
-	regUser);
+	regUser
+);
 
-	router.post('/auth/login',
+router.post('/auth/login',
 	[
 		check('email', 'Wrong email').isEmail(),
 		check('password', 'Password does not correspond to safety required').isLength({ min: 6 })
 	],
-	loginUser);
+	loginUser
+);
 
 async function regUser(req, res) {
 	try {
-		checkValidation(req);
+		const validation = getValidationResult(req, res);
+		if (validation.hasErrors) {
+			return validation.res;
+		}
+
 		const { email, password } = req.body;
 		const userExists = await User.findOne({ email });
 
@@ -48,7 +54,11 @@ async function regUser(req, res) {
 
 async function loginUser(req, res) {
 	try {
-		checkValidation(req);
+		const validation = getValidationResult(req, res);
+		if (validation.hasErrors) {
+			return validation.res;
+		}
+
 		const { email, password } = req.body;
 		const user = await User.findOne({ email });
 
@@ -57,7 +67,7 @@ async function loginUser(req, res) {
 		}
 
 		const isPasswordMatch = bcrypt.compare(password, user.password);
-		if(!isPasswordMatch) {
+		if (!isPasswordMatch) {
 			return getHttpRes(403, res);
 		}
 
@@ -73,14 +83,22 @@ async function loginUser(req, res) {
 	}
 }
 
-function checkValidation (req) {
+function getValidationResult (req, res) {
+	const result = {
+		hasErrors: false,
+	};
+
 	const errors = validationResult(req);
+
 	if (!errors.isEmpty()) {
-		return getHttpRes(400, res, {
+		result.res = getHttpRes(400, res, {
 			errors: errors.array(),
 			message: 'Validation error'
-		}) 
+		});
+		result.hasErrors = true;
 	}
+
+	return result;
 }
 
 module.exports = router;
